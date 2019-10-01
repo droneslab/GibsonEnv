@@ -100,6 +100,7 @@ add_definitions(
     -D_CRT_SECURE_NO_WARNINGS
 )
 
+add_definitions(-D GLM_ENABLE_EXPERIMENTAL)
 
 
 cuda_add_executable(depth_render
