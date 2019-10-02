@@ -296,6 +296,10 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             print('Saving to', savepath)
             model.save(savepath)
             print ("Saved model successfully.")
+
+    with open(osp.join(base_path, "motley_log", 'log.pkl'), 'wb') as fh:
+        fh.write(cloudpickle.dumps(env.env.debug_positions))
+
     env.close()
 
 def safemean(xs):

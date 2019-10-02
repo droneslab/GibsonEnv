@@ -73,6 +73,8 @@ class BaseRobotEnv(BaseEnv):
         self._robot_introduced = False
         self._scene_introduced = False
 
+        self.debug_positions = []
+
     def assign_ports(self):
         '''Rendering multiple modalities (RGB, depth, normal) needs to be done 
         on different ports. Assign individual ports to each modality:
@@ -197,10 +199,11 @@ class BaseRobotEnv(BaseEnv):
         self.reward += sum(self.rewards)
         self.eps_reward += sum(self.rewards)
 
-        debugmode = 0
+        debugmode = 1
         if debugmode:
-            print("Eps frame {} reward {}".format(self.nframe, self.reward))
-            print("position", self.robot.get_position())
+            # print("Eps frame {} reward {}".format(self.nframe, self.reward))
+            # print("position", self.robot.get_position())
+            self.debug_positions.append(self.robot.get_position())
         if self.gui:
             pos = self.robot._get_scaled_position()
             orn = self.robot.get_orientation()
