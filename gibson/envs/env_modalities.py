@@ -29,6 +29,7 @@ from transforms3d.euler import euler2quat, euler2mat
 from transforms3d.quaternions import quat2mat, qmult
 import transforms3d.quaternions as quat
 import time
+from baselines import logger
 
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
@@ -508,6 +509,7 @@ class CameraRobotEnv(BaseRobotEnv):
         return np.zeros((256, 256, 4))
 
     def render_observations(self, pose):
+        ro_starttime = time.time()
         '''Render all environment observations, called inside every step()
         Input
             @pose: current robot pose
@@ -535,6 +537,8 @@ class CameraRobotEnv(BaseRobotEnv):
                 raise Exception("Output component {} is not available".format(output))
 
         #visuals = np.concatenate(visuals, 2)
+        ro_currenttime = time.time()
+        logger.logkv('render_time', ro_currenttime-ro_starttime)
         return observations
 
     def get_observations(self):
