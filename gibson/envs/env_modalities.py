@@ -302,6 +302,9 @@ class CameraRobotEnv(BaseRobotEnv):
     PC renderer is not initialized to save time.
     """
     multiprocessing = True
+    rendertimeList= list()
+    averagerendertimeList=list()
+
     def __init__(self, config, gpu_idx, scene_type, tracking_camera):
         ## The following properties are already instantiated inside xxx_env.py:
         BaseRobotEnv.__init__(self, config, tracking_camera, scene_type, gpu_idx)
@@ -509,8 +512,6 @@ class CameraRobotEnv(BaseRobotEnv):
     def get_blank_visuals(self):
         return np.zeros((256, 256, 4))
 
-    rendertimeList=[]
-    averagerendertimeList=[]
 
     def render_observations(self, pose):
         ro_starttime = time.time()
@@ -546,14 +547,14 @@ class CameraRobotEnv(BaseRobotEnv):
         render_time = ro_currenttime-ro_starttime
         print('render_time', render_time)
 
-        rendertimeList.append(render_time)
+        self.rendertimeList.append(render_time)
 
         return observations
 
-    def calc_average(rendertimeList): 
+    def calc_average(self,rendertimeList): 
         meanval = mean(rendertimeList)
         print("average", meanval)
-        averagerendertimeList.append(meanval)
+        self.averagerendertimeList.append(meanval)
         return mean(rendertimeList)
 
 
