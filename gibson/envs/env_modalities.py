@@ -545,7 +545,7 @@ class CameraRobotEnv(BaseRobotEnv):
         ro_currenttime = time.time()
 
         render_time = ro_currenttime-ro_starttime
-        print('render_time', render_time)
+        #print('render_time', render_time)
 
         self.rendertimeList.append(render_time)
 
