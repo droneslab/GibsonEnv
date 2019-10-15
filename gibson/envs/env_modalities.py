@@ -30,6 +30,7 @@ from transforms3d.quaternions import quat2mat, qmult
 import transforms3d.quaternions as quat
 import time
 from baselines import logger
+from statistics import mean
 
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
@@ -508,6 +509,9 @@ class CameraRobotEnv(BaseRobotEnv):
     def get_blank_visuals(self):
         return np.zeros((256, 256, 4))
 
+    rendertimeList=[]
+    averagerendertimeList=[]
+
     def render_observations(self, pose):
         ro_starttime = time.time()
         '''Render all environment observations, called inside every step()
@@ -538,8 +542,22 @@ class CameraRobotEnv(BaseRobotEnv):
 
         #visuals = np.concatenate(visuals, 2)
         ro_currenttime = time.time()
-        logger.logkv('render_time', ro_currenttime-ro_starttime)
+
+        render_time = ro_currenttime-ro_starttime
+        print('render_time', render_time)
+
+        rendertimeList.append(render_time)
+
         return observations
+
+    def calc_average(rendertimeList): 
+        meanval = mean(rendertimeList)
+        print("average", meanval)
+        averagerendertimeList.append(meanval)
+        return mean(rendertimeList)
+
+
+    print(averagerendertimeList)
 
     def get_observations(self):
         observations = {}
