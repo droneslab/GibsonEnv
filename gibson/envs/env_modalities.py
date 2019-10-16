@@ -31,6 +31,7 @@ import transforms3d.quaternions as quat
 import time
 from baselines import logger
 from statistics import mean
+import numpy as np
 
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
@@ -550,7 +551,7 @@ class CameraRobotEnv(BaseRobotEnv):
         self.rendertimeList.append(render_time)
         self.calc_average(self.rendertimeList)
         print("averages list", self.averagerendertimeList)
-        
+        self.calc_variance(self.averagerendertimeList)
         return observations
 
     def calc_average(self,rendertimeList): 
@@ -559,6 +560,11 @@ class CameraRobotEnv(BaseRobotEnv):
         self.averagerendertimeList.append(meanval)
         #print("averages list",averagerendertimeList)
         return mean(rendertimeList)
+
+    def calc_variance(self,averagerendertimeList):
+        variance = np.var(averagerendertimeList)
+        print("Variance of the list *******", variance)
+        return variance
 
     def get_observations(self):
         observations = {}
