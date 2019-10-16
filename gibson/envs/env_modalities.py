@@ -549,7 +549,8 @@ class CameraRobotEnv(BaseRobotEnv):
 
         self.rendertimeList.append(render_time)
         self.calc_average(self.rendertimeList)
-
+        print("averages list", averagerendertimeList)
+        
         return observations
 
     def calc_average(self,rendertimeList): 
@@ -558,9 +559,6 @@ class CameraRobotEnv(BaseRobotEnv):
         self.averagerendertimeList.append(meanval)
         #print("averages list",averagerendertimeList)
         return mean(rendertimeList)
-
-
-    print("averages list", averagerendertimeList)
 
     def get_observations(self):
         observations = {}
