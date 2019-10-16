@@ -554,12 +554,13 @@ class CameraRobotEnv(BaseRobotEnv):
 
     def calc_average(self,rendertimeList): 
         meanval = mean(rendertimeList)
-        print("average", meanval)
+        #print("average", meanval)
         self.averagerendertimeList.append(meanval)
+        #print("averages list",averagerendertimeList)
         return mean(rendertimeList)
 
 
-    print(averagerendertimeList)
+    print("averages list", averagerendertimeList)
 
     def get_observations(self):
         observations = {}
