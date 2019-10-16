@@ -548,6 +548,7 @@ class CameraRobotEnv(BaseRobotEnv):
         #print('render_time', render_time)
 
         self.rendertimeList.append(render_time)
+        self.calc_average(self.rendertimeList)
 
         return observations
 
