@@ -215,6 +215,8 @@ class BaseRobotEnv(BaseEnv):
         eye_pos, eye_quat = self.get_eye_pos_orientation()
         pose = [eye_pos, eye_quat]
         observations = self.render_observations(pose)
+        self.calc_average(self.rendertimeList)
+        self.calc_variance(self.averagerendertimeList)
 
         debugmode = 0
         if (debugmode):
