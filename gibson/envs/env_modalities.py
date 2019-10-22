@@ -215,7 +215,9 @@ class BaseRobotEnv(BaseEnv):
         eye_pos, eye_quat = self.get_eye_pos_orientation()
         pose = [eye_pos, eye_quat]
         observations = self.render_observations(pose)
+        #self.rendertimeList.append(render_time)
         self.calc_average(self.rendertimeList)
+        print("averages list", self.averagerendertimeList)
         self.calc_variance(self.averagerendertimeList)
 
         debugmode = 0
@@ -550,7 +552,7 @@ class CameraRobotEnv(BaseRobotEnv):
         render_time = ro_currenttime-ro_starttime
         print('render_time', render_time)
 
-        #self.rendertimeList.append(render_time)
+        self.rendertimeList.append(render_time)
         #print("rendertimeList", self.rendertimeList)
         #self.calc_average(self.rendertimeList)
         #print("averages list", self.averagerendertimeList)
