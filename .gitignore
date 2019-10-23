@@ -69,3 +69,6 @@ nav_models
 
 gibson/assets
 *.pdf
+
+**/tags
+pytorch/
