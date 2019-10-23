@@ -162,6 +162,8 @@ git clone https://github.com/fxia22/baselines.git
 pip install -e baselines
 ```
 
+Note: This installation does not create /model folder inside '/GibsonEnv/gibson/utils' because of which you are more likely to run into an issue "No such file or directory: '/GibsonEnv/gibson/utils/models/make_model.pkl'. To resolve this create a 'models' folder inside utils.
+
 Uninstalling
 ----
 
