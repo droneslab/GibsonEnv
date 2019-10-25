@@ -564,7 +564,7 @@ class CameraRobotEnv(BaseRobotEnv):
         #print("average", meanval)
         self.averagerendertimeList.append(meanval)
         #print("averages list",averagerendertimeList)
-        return mean(averagerendertimeList)
+        return mean(self.averagerendertimeList)
 
     def calc_variance(self,averagerendertimeList):
         variance = np.var(averagerendertimeList)
