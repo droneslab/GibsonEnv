@@ -216,8 +216,8 @@ class BaseRobotEnv(BaseEnv):
         pose = [eye_pos, eye_quat]
         observations = self.render_observations(pose)
         #self.rendertimeList.append(render_time)
-        self.calc_average(self.rendertimeList)
-        print("averages list", self.averagerendertimeList)
+        
+        print("average", self.calc_average(self.rendertimeList))
         self.calc_variance(self.averagerendertimeList)
 
         debugmode = 0
@@ -561,10 +561,10 @@ class CameraRobotEnv(BaseRobotEnv):
 
     def calc_average(self,rendertimeList): 
         meanval = mean(rendertimeList)
-        print("average", meanval)
+        #print("average", meanval)
         self.averagerendertimeList.append(meanval)
         #print("averages list",averagerendertimeList)
-        return mean(rendertimeList)
+        return mean(averagerendertimeList)
 
     def calc_variance(self,averagerendertimeList):
         variance = np.var(averagerendertimeList)
