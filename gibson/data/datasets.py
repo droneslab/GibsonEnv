@@ -49,7 +49,7 @@ def depth_loader(path):
 
 def get_model_path(model_id):
     data_path = os.path.join(os.path.dirname(os.path.abspath(assets.__file__)), 'dataset')
-    assert (model_id in os.listdir(data_path)) or model_id == 'Airport', "Model {} does not exist".format(model_id)
+    assert (model_id in os.listdir(data_path)) or model_id == 'Siren', "Model {} does not exist".format(model_id)
     return os.path.join(data_path, model_id)
 
 def get_item_fn(inds, select, root, loader, transform, off_3d, target_transform, depth_trans, off_pc_render, dll, train, require_rgb):

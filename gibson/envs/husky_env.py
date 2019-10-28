@@ -34,7 +34,7 @@ class HuskyNavigateEnv(CameraRobotEnv):
         assert(self.config["envname"] == self.__class__.__name__ or self.config["envname"] == "TestEnv")
 
         CameraRobotEnv.__init__(self, self.config, gpu_idx,
-                                scene_type="Airport" if self.config["model_id"]=="Airport" else "building",
+                                scene_type="stadium" if self.config["model_id"]=="Siren" else "building",
                                 tracking_camera=tracking_camera)
 
         self.robot_introduce(Husky(self.config, env=self))
