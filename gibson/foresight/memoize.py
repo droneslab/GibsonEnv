@@ -1,4 +1,5 @@
 import os
+from functools import wraps
 
 class Store(object):
     """Abstract storage class"""
@@ -10,6 +11,18 @@ class Store(object):
 
     def set(self, key, value):
         pass
+
+    def open(self):
+        return self
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self.open()
+
+    def __exit__(self):
+        self.close()
 
 
 class GPUStore(Store):
@@ -53,11 +66,17 @@ class SSDStore(Store):
             fh.write(value)
 
 
-class Memoizer(object):
+class Memoize(object):
     """Memoizer for RL training"""
-    def __init__(self):
-        super(Memoizer, self).__init__()
-        self.ssd = SSDStore('/tmp/test_foresight')
+    def __init__(self, path):
+        self.ssd = SSDStore(path)
+
+    def __call__(self, func):
+        @wraps(func)
+        def wrapped(*args):
+            return func(*args)
+
+        return wrapped
 
     def get(self, key):
         """Retrieve the value in cache against key

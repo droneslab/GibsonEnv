@@ -52,7 +52,7 @@ class Model(object):
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
             advs = returns - values
             advs = (advs - advs.mean()) / (advs.std() + 1e-8)
-            td_map = {train_model.X:obs, A:actions, ADV:advs, R:returns, LR:lr, 
+            td_map = {train_model.X:obs, A:actions, ADV:advs, R:returns, LR:lr,
                     CLIPRANGE:cliprange, OLDNEGLOGPAC:neglogpacs, OLDVPRED:values}
             if states is not None:
                 td_map[train_model.S] = states
@@ -97,7 +97,7 @@ class Runner(object):
         print(self.obs_sensor.shape)
         obs_all = self.env.reset()
 
-        self.obs_sensor[:] = obs_all['nonviz_sensor'] 
+        self.obs_sensor[:] = obs_all['nonviz_sensor']
         self.sensor = sensor
         if sensor:
             self.obs = self.obs_sensor
@@ -123,11 +123,11 @@ class Runner(object):
             mb_actions.append([actions])
             mb_values.append(values)
             mb_neglogpacs.append(neglogpacs)
-            mb_dones.append([self.dones])   
+            mb_dones.append([self.dones])
 
             if self.dones:
                 obs_all = self.env.reset()
-                self.obs_sensor[:] = obs_all['nonviz_sensor'] 
+                self.obs_sensor[:] = obs_all['nonviz_sensor']
                 if self.sensor:
                     self.obs = self.obs_sensor
                 else:
@@ -136,7 +136,7 @@ class Runner(object):
                 self.dones = False
             else:
                 obs_all, rewards, self.dones, infos = self.env.step(actions)
-                self.obs_sensor[:] = obs_all['nonviz_sensor'] 
+                self.obs_sensor[:] = obs_all['nonviz_sensor']
                 if self.sensor:
                     self.obs = self.obs_sensor
                 else:
@@ -162,7 +162,7 @@ class Runner(object):
         #discount/bootstrap off value fn
         mb_returns = np.zeros_like(mb_rewards)
         mb_advs = np.zeros_like(mb_rewards)
-        lastgaelam = 0        
+        lastgaelam = 0
         for t in reversed(range(self.nsteps)):
             if t == self.nsteps - 1:
                 nextnonterminal = 1.0 - self.dones
@@ -174,7 +174,7 @@ class Runner(object):
             mb_advs[t] = lastgaelam = delta + self.gamma * self.lam * nextnonterminal * lastgaelam
         mb_returns = mb_advs + mb_values
         #print("before mapping", epinfos)
-        return (*map(sf01, (mb_obs, mb_returns, mb_dones, mb_actions, mb_values, mb_neglogpacs)), 
+        return (*map(sf01, (mb_obs, mb_returns, mb_dones, mb_actions, mb_values, mb_neglogpacs)),
             mb_states, epinfos)
 
 # obs, returns, masks, actions, values, neglogpacs, states = runner.run()
@@ -192,8 +192,8 @@ def constfn(val):
         return val
     return f
 
-def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr, 
-            vf_coef=0.5,  max_grad_norm=0.5, gamma=0.99, lam=0.95, 
+def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
+            vf_coef=0.5,  max_grad_norm=0.5, gamma=0.99, lam=0.95,
             log_interval=10, nminibatches=4, noptepochs=4, cliprange=0.2,
             save_interval=0, reload_name=None, sensor=False):
 
@@ -214,21 +214,21 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     nbatch = nenvs * nsteps
     nbatch_train = nbatch // nminibatches
 
-    make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train, 
+    make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train,
                     nsteps=nsteps, ent_coef=ent_coef, vf_coef=vf_coef,
                     max_grad_norm=max_grad_norm)
-    
+
     if save_interval and logger.get_dir():
         import cloudpickle
         base_path = os.path.dirname(os.path.abspath(__file__))
         print(base_path)
         with open(osp.join(base_path, "models", 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
-    
+
     model = make_model()
     if reload_name:
         model.load(reload_name)
-    
+
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, sensor=sensor)
 
     epinfobuf = deque(maxlen=100)
@@ -269,7 +269,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                     mbflatinds = flatinds[mbenvinds].ravel()
                     slices = (arr[mbflatinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
                     mbstates = states[mbenvinds]
-                    mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))            
+                    mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))
 
         lossvals = np.mean(mblossvals, axis=0)
         tnow = time.time()
@@ -308,8 +308,8 @@ def safemean(xs):
 
 
 
-def enjoy(*, policy, env, nsteps, total_timesteps, ent_coef, lr, 
-            vf_coef=0.5,  max_grad_norm=0.5, gamma=0.99, lam=0.95, 
+def enjoy(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
+            vf_coef=0.5,  max_grad_norm=0.5, gamma=0.99, lam=0.95,
             log_interval=10, nminibatches=4, noptepochs=4, cliprange=0.2,
             save_interval=0, reload_name=None, sensor=False):
 
@@ -333,21 +333,21 @@ def enjoy(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     nbatch = nenvs * nsteps
     nbatch_train = nbatch // nminibatches
 
-    make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train, 
+    make_model = lambda : Model(policy=policy, ob_space=ob_space, ac_space=ac_space, nbatch_act=nenvs, nbatch_train=nbatch_train,
                     nsteps=nsteps, ent_coef=ent_coef, vf_coef=vf_coef,
                     max_grad_norm=max_grad_norm)
-    
+
     if save_interval and logger.get_dir():
         import cloudpickle
         base_path = os.path.dirname(os.path.abspath(__file__))
         print(base_path)
         with open(osp.join(base_path, "models", 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
-    
+
     model = make_model()
     if reload_name:
         model.load(reload_name)
-    
+
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, sensor=sensor)
 
     epinfobuf = deque(maxlen=100)

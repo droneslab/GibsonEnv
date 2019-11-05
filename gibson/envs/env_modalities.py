@@ -30,6 +30,8 @@ from transforms3d.quaternions import quat2mat, qmult
 import transforms3d.quaternions as quat
 import time
 
+from gibson.foresight.memoize import Memoize
+
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
 DEFAULT_DEBUG_CAMERA = {
@@ -76,7 +78,7 @@ class BaseRobotEnv(BaseEnv):
         self.debug_positions = []
 
     def assign_ports(self):
-        '''Rendering multiple modalities (RGB, depth, normal) needs to be done 
+        '''Rendering multiple modalities (RGB, depth, normal) needs to be done
         on different ports. Assign individual ports to each modality:
 
         | Rendering | Port         |
@@ -309,7 +311,7 @@ class CameraRobotEnv(BaseRobotEnv):
 
         if self.gui:
             self.screen_arr = np.zeros([512, 512, 3])
-        
+
         self.test_env = "TEST_ENV" in os.environ.keys() and os.environ['TEST_ENV'] == "True"
         self._use_filler = config["use_filler"]
         self._require_camera_input = 'rgb_filled' in self.config["output"] or \
@@ -388,7 +390,7 @@ class CameraRobotEnv(BaseRobotEnv):
         self.potential = self.robot.calc_potential()
         eye_pos, eye_quat = self.get_eye_pos_orientation()
         pose = [eye_pos, eye_quat]
-        
+
         observations = self.render_observations(pose)
         return observations #, sensor_state
 
@@ -510,6 +512,7 @@ class CameraRobotEnv(BaseRobotEnv):
     def get_blank_visuals(self):
         return np.zeros((256, 256, 4))
 
+    @Memoize('/tmp/test_foresight')
     def render_observations(self, pose):
         '''Render all environment observations, called inside every step()
         Input
@@ -520,6 +523,7 @@ class CameraRobotEnv(BaseRobotEnv):
         TODO:
             @hzyjerry: add noise to observation
         '''
+        print(self, pose)
 
         self.render_nonviz_sensor = self.robot.calc_state()
 
@@ -547,7 +551,7 @@ class CameraRobotEnv(BaseRobotEnv):
                 observations[output] = getattr(self, "render_" + output)
             except Exception as e:
                 raise Exception("Output component {} is not available".format(output))
-        
+
         #visuals = np.concatenate(visuals, 2)
         return observations
 
@@ -626,15 +630,15 @@ class CameraRobotEnv(BaseRobotEnv):
                 targets.append(target)
                 poses.append(pose)
                 sources.append(target)
-                source_depths.append(target_depth) 
-        
-        self.r_camera_rgb = PCRenderer(self.port_rgb, sources, source_depths, target, rts, 
-                                       scale_up=self.scale_up, 
+                source_depths.append(target_depth)
+
+        self.r_camera_rgb = PCRenderer(self.port_rgb, sources, source_depths, target, rts,
+                                       scale_up=self.scale_up,
                                        semantics=source_semantics,
-                                       gui=self.gui, 
-                                       use_filler=self._use_filler,  
+                                       gui=self.gui,
+                                       use_filler=self._use_filler,
                                        gpu_idx=self.gpu_idx,
-                                       windowsz=self.windowsz, 
+                                       windowsz=self.windowsz,
                                        env = self)
 
     def setup_camera_multi(self):
@@ -669,7 +673,7 @@ class CameraRobotEnv(BaseRobotEnv):
         render_main  = "./depth_render --GPU {} --modelpath {} -w {} -h {} -f {} -p {}".format(self.gpu_idx, self.model_path, self.windowsz, self.windowsz, self.config["fov"]/np.pi*180, self.port_depth)
         render_norm  = "./depth_render --GPU {} --modelpath {} -n 1 -w {} -h {} -f {} -p {}".format(self.gpu_idx, self.model_path, self.windowsz, self.windowsz, self.config["fov"]/np.pi*180, self.port_normal)
         render_semt  = "./depth_render --GPU {} --modelpath {} -t 1 -r {} -c {} -w {} -h {} -f {} -p {}".format(self.gpu_idx, self.model_path, self._semantic_source, self._semantic_color, self.windowsz, self.windowsz, self.config["fov"]/np.pi*180, self.port_sem)
-        
+
         self.r_camera_mul = subprocess.Popen(shlex.split(render_main), shell=False)
         #self.r_camera_dep = subprocess.Popen(shlex.split(render_depth), shell=False)
         if self._require_normal:
@@ -756,7 +760,7 @@ class SemanticRobotEnv(CameraRobotEnv):
         debugmode=0
         if debugmode:
             self.semantic_pos = np.array([[0, 0, 0.2]])
-    
+
     def dist_to_semantic_pos(self):
         pos = self.robot.get_position()
         x, y, z, w = self.robot.get_orientation()
