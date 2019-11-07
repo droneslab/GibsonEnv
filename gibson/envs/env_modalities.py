@@ -523,8 +523,6 @@ class CameraRobotEnv(BaseRobotEnv):
         TODO:
             @hzyjerry: add noise to observation
         '''
-        print(self, pose)
-
         self.render_nonviz_sensor = self.robot.calc_state()
 
         if self._require_camera_input:
