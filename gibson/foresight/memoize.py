@@ -29,13 +29,15 @@ class Memoize(object):
     def generate_key(self, pose):
         position = pose[0] * 100
         orientation = np.array(pose[1], dtype=np.float64) * 100
-        return '{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}'.format( position[0]
+        key = '{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}'.format( position[0]
                                                                         , position[1]
                                                                         , position[2]
                                                                         , orientation[0]
                                                                         , orientation[1]
                                                                         , orientation[2]
                                                                         , orientation[3])
+        key = key.replace('-', 'M')
+        return key
 
     def get(self, key):
         """Retrieve the value in cache against key
@@ -43,11 +45,13 @@ class Memoize(object):
         :key: key used for storage and retrieval
         :returns: content stored against the key
         """
-        if self.ram.exists(key):
-            return self.ram.get(key)
-        elif self.ssd.exists(key):
-            return self.ssd.get(key)
-        return None
+        # if self.ram.exists(key):
+        #     return self.ram.get(key)
+        # elif self.ssd.exists(key):
+        #     return self.ssd.get(key)
+        # return None
+
+        return self.ssd.get(key) if self.ssd.exists(key) else None
 
     def set(self, key, value):
         """Store the value in cache against key
@@ -55,10 +59,12 @@ class Memoize(object):
         :key: key used for storage and retrieval
         :value: content to be stored
         """
-        if self.ram.count() < self.ram_max_count:
-            self.ram.set(key, value)
-        else:
-            self.ssd.set(key, value)
+        # if self.ram.count() < self.ram_max_count:
+        #     self.ram.set(key, value)
+        # else:
+        #     self.ssd.set(key, value)
+
+        self.ssd.set(key, value)
 
 
 class Store(object):
