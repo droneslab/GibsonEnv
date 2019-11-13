@@ -27,7 +27,7 @@ class Memoize(object):
         return wrapped
 
     def generate_key(self, pose):
-        position = pose[0] * 100
+        position = pose[0] * 1000
         orientation = np.array(pose[1], dtype=np.float64) * 100
         key = '{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}_{:.0f}'.format( position[0]
                                                                         , position[1]
