@@ -51,7 +51,9 @@ class Memoize(object):
         #     return self.ssd.get(key)
         # return None
 
-        return self.ssd.get(key) if self.ssd.exists(key) else None
+        # return self.ssd.get(key) if self.ssd.exists(key) else None
+
+        return self.ram.get(key) if self.ram.exists(key) else None
 
     def set(self, key, value):
         """Store the value in cache against key
@@ -64,7 +66,9 @@ class Memoize(object):
         # else:
         #     self.ssd.set(key, value)
 
-        self.ssd.set(key, value)
+        # self.ssd.set(key, value)
+
+        self.ram.set(key, value)
 
 
 class Store(object):
