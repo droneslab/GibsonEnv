@@ -53,7 +53,7 @@ class Memoize(object):
 
         # return self.ram.get(key) if self.ram.exists(key) else None
 
-        return self.ssd.get(key) if self.ssd.exists(key) else None
+        return self.ram.get(key) if self.ram.exists(key) else None
 
 
     def set(self, key, value):
@@ -69,7 +69,7 @@ class Memoize(object):
 
         # self.ram.set(key, value)
 
-        self.ssd.set(key, value)
+        self.ram.set(key, value)
 
 
 
