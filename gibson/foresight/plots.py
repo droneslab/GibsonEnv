@@ -5,7 +5,8 @@ from numpy import genfromtxt
 import csv
 
 BASE_DIR='/ubcse/drones/projects/foresight/results/gcp'
-PLOT_DIRS=['Vanilla', 'SSD']
+# PLOT_DIRS=['Vanilla', 'SSD']
+PLOT_DIRS=['Test']
 PLOT_LABELS = ['value_loss','approxkl','policy_entropy','policy_loss','eprewmean','eplenmean'];
 
 def parse(filename):
