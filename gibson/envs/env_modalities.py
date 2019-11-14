@@ -512,7 +512,7 @@ class CameraRobotEnv(BaseRobotEnv):
     def get_blank_visuals(self):
         return np.zeros((256, 256, 4))
 
-    # @Memoize('/tmp/test_foresight')
+    @Memoize('/tmp/test_foresight')
     def render_observations(self, pose):
         '''Render all environment observations, called inside every step()
         Input
