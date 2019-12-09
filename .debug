@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-eval "$(conda shell.bash hook)"
-conda activate gibson
-
-python examples/train/train_husky_navigate_ppo2.py

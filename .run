@@ -8,8 +8,52 @@ run_dir="${base_dir}/$(date '+%Y%m%d_%H%M%S')"
 log_dir="${run_dir}/log"
 weights_dir="${run_dir}/weights"
 
-mkdir -p "${run_dir}"
-mkdir -p "${log_dir}"
-mkdir -p "${weights_dir}"
 
-python examples/train/train_husky_navigate_ppo2_memoization.py --logdir "${log_dir}"
+function makedirs() {
+    mkdir -p "${run_dir}"
+    mkdir -p "${log_dir}"
+    mkdir -p "${weights_dir}"
+}
+
+function run(){
+    makedirs
+    python examples/train/train_husky_navigate_ppo2_memoization.py --logdir "${log_dir}"
+}
+
+function debug(){
+    makedirs
+    python examples/train/train_husky_navigate_ppo2.py
+}
+
+function profile() {
+    makedirs
+    python -m cProfile -o "gibson-nomemoization-gui-${timestamp}.profile" examples/train/train_husky_navigate_ppo2_debug.py --logdir "${log_dir}"
+}
+
+function plots() {
+    python gibson/foresight/plots.py
+}
+
+function usage() {
+    echo ""
+    echo "Usage: "
+    echo "~~~~~~~"
+    echo ".run [ run | debug | profile | plots ]"
+    echo ""
+}
+
+if [ "$#" -eq 1 ]; then
+    if [ "x$1" = "xrun" ]; then
+        run
+    elif [ "x$1" = "xdebug" ]; then
+        debug
+    elif [ "x$1" = "xprofile" ]; then
+        profile
+    elif [ "x$1" = "xplots" ]; then
+        plots
+    else
+        usage
+    fi
+else
+    run
+fi 

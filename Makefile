@@ -1,6 +1,8 @@
 run:
-	$(PWD)/.run
+	$(PWD)/.run run
 debug:
-	$(PWD)/.debug
+	$(PWD)/.run debug
+profile:
+	$(PWD)/.run profile
 plots:
-	$(PWD)/.plots
+	$(PWD)/.run plots

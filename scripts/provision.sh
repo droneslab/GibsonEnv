@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 USER=$(whoami)
-CONDA_INSTALL_DIR=/opt/share/conda
+CONDA_INSTALL_DIR=/opt/share
 
 ## Install essentials
 sudo apt-get update
@@ -38,7 +38,9 @@ sudo mkdir -p ${CONDA_INSTALL_DIR}
 sudo chown -R ${USER} ${CONDA_INSTALL_DIR}
 wget "https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh"
 chmod +x Miniconda2-latest-Linux-x86_64.sh
-./Miniconda2-latest-Linux-x86_64.sh -b -p ${CONDA_INSTALL_DIR}
+./Miniconda2-latest-Linux-x86_64.sh -b -p "${CONDA_INSTALL_DIR}/conda"
+source ${CONDA_INSTALL_DIR}/conda/etc/profile.d/conda.sh
+echo "source ${CONDA_INSTALL_DIR}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
 
 ## Install Gibson Environment

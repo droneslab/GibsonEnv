@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-eval "$(conda shell.bash hook)"
-conda activate gibson
-
-base_dir="/ubcse/drones/projects/foresight/results"
-log_dir="${run_dir}/log"
-
-python gibson/foresight/plots.py
