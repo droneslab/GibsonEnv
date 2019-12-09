@@ -17,12 +17,12 @@ function makedirs() {
 
 function run(){
     makedirs
-    python examples/train/train_husky_navigate_ppo2_memoization.py --logdir "${log_dir}"
+    python examples/train/train_husky_navigate_ppo2_debug.py --logdir "${log_dir}"
 }
 
 function debug(){
     makedirs
-    python examples/train/train_husky_navigate_ppo2.py
+    python examples/train/train_husky_navigate_ppo2_debug.py --logdir "${log_dir}"
 }
 
 function profile() {

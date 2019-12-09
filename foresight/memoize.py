@@ -5,15 +5,24 @@ import numpy as np
 
 import pickle as pkl
 
+from foresight.config import foresight_config as config
 
 class Memoize(object):
     """Memoizer for RL training"""
     def __init__(self, path):
         self.ssd = SSDStore(path)
         self.ram = RAMStore()
-        self.ram_max_count = 1000
+
+        self.store = SingleStoragePolicy(self.ssd)
+        if config['StoragePolicy'] == 'RAMOnly':
+            self.store = SingleStoragePolicy(self.ram)
+
 
     def __call__(self, func):
+
+        if config['EnableMemoization'] == False:
+            return func
+
         @wraps(func)
         def wrapped(*args):
             result = None
@@ -45,15 +54,7 @@ class Memoize(object):
         :key: key used for storage and retrieval
         :returns: content stored against the key
         """
-        # if self.ram.exists(key):
-        #     return self.ram.get(key)
-        # elif self.ssd.exists(key):
-        #     return self.ssd.get(key)
-        # return None
-
-        # return self.ram.get(key) if self.ram.exists(key) else None
-
-        return self.ram.get(key) if self.ram.exists(key) else None
+        return self.store.get(key) if self.store.exists(key) else None
 
 
     def set(self, key, value):
@@ -62,15 +63,22 @@ class Memoize(object):
         :key: key used for storage and retrieval
         :value: content to be stored
         """
-        # if self.ram.count() < self.ram_max_count:
-        #     self.ram.set(key, value)
-        # else:
-        #     self.ssd.set(key, value)
+        self.store.set(key, value)
 
-        # self.ram.set(key, value)
 
-        self.ram.set(key, value)
+class SingleStoragePolicy(object):
 
+    def __init__(self, store):
+        self.store = store
+
+    def get(self, key):
+        return self.store.get()
+
+    def set(self, key, value):
+        self.store.set(key, value)
+
+    def exists(self, key):
+        return self.store.exists()
 
 
 class Store(object):

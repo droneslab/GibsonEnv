@@ -18,6 +18,7 @@ dev/transfer.c
 *.bak
 *.zip
 .*.swp
+.*.swo
 
 
 # vscode

@@ -30,7 +30,7 @@ from transforms3d.quaternions import quat2mat, qmult
 import transforms3d.quaternions as quat
 import time
 
-from gibson.foresight.memoize import Memoize
+from foresight.memoize import Memoize
 
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
