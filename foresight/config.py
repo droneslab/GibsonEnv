@@ -1,5 +1,11 @@
 
 foresight_config = {
-    'EnableMemoization': True
-    'StoragePolicy': 'SSD'
+     'Memoization': {
+           'Enabled': True
+         , 'StoragePolicy': 'SSD'
+     }
+    , 'Profile': {
+          'Enabled': True
+        , 'Filename': '../analysis/absolute/{}.profile'
+    }
 }

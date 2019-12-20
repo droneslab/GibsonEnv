@@ -8,6 +8,8 @@ from transforms3d.quaternions import quat2mat, qmult
 import transforms3d.quaternions as quat
 import sys
 
+from foresight.profile import Profile
+
 OBSERVATION_EPS = 0.01
 
 
@@ -17,9 +19,9 @@ class WalkerBase(BaseRobot):
     base_position, apply_action, calc_state
     reward
     """
-        
-    def __init__(self, 
-        filename,           # robot file name 
+
+    def __init__(self,
+        filename,           # robot file name
         robot_name,         # robot name
         action_dim,         # action dimension
         power,
@@ -91,7 +93,7 @@ class WalkerBase(BaseRobot):
     def move_forward(self, forward=0.05):
         x, y, z, w = self.robot_body.get_orientation()
         self.move_by(quat2mat([w, x, y, z]).dot(np.array([forward, 0, 0])))
-        
+
     def move_backward(self, backward=0.05):
         x, y, z, w = self.robot_body.get_orientation()
         self.move_by(quat2mat([w, x, y, z]).dot(np.array([-backward, 0, 0])))
@@ -105,7 +107,7 @@ class WalkerBase(BaseRobot):
         orn = self.robot_body.get_orientation()
         new_orn = qmult((euler2quat(delta, 0, 0)), orn)
         self.robot_body.set_orientation(new_orn)
-        
+
     def get_rpy(self):
         return self.robot_body.bp_pose.rpy()
 
@@ -160,7 +162,7 @@ class WalkerBase(BaseRobot):
             [self.target_pos[1] - self.body_xyz[1], self.target_pos[0] - self.body_xyz[0]])
         self.walk_target_dist_xyz = np.linalg.norm(
             [self.target_pos[2] - self.body_xyz[2], self.target_pos[0] - self.body_xyz[1], self.target_pos[0] - self.body_xyz[0]])
-        
+
         self.angle_to_target = self.walk_target_theta - yaw
         if self.angle_to_target > np.pi:
             self.angle_to_target -= 2 * np.pi
@@ -256,17 +258,17 @@ class Ant(WalkerBase):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale
         self.mjcf_scaling = scale
-        WalkerBase.__init__(self, "ant.xml", "torso", action_dim=8, 
-                            sensor_dim=28, power=2.5, scale=scale, 
+        WalkerBase.__init__(self, "ant.xml", "torso", action_dim=8,
+                            sensor_dim=28, power=2.5, scale=scale,
                             initial_pos=config['initial_pos'],
-                            target_pos=config["target_pos"], 
-                            resolution=config["resolution"], 
+                            target_pos=config["target_pos"],
+                            resolution=config["resolution"],
                             env = env)
         self.r_f = 0.1
         if config["is_discrete"]:
             self.action_space = gym.spaces.Discrete(17)
             self.torque = 10
-            ## Hip_1, Ankle_1, Hip_2, Ankle_2, Hip_3, Ankle_3, Hip_4, Ankle_4 
+            ## Hip_1, Ankle_1, Hip_2, Ankle_2, Hip_3, Ankle_3, Hip_4, Ankle_4
             self.action_list = [[self.r_f * self.torque, 0, 0, 0, 0, 0, 0, 0],
                                 [0, self.r_f * self.torque, 0, 0, 0, 0, 0, 0],
                                 [0, 0, self.r_f * self.torque, 0, 0, 0, 0, 0],
@@ -285,10 +287,10 @@ class Ant(WalkerBase):
                                 [0, 0, 0, 0, 0, 0, 0, -self.r_f * self.torque],
                                 [0, 0, 0, 0, 0, 0, 0, 0]]
             '''
-            [[self.r_f * self.torque, 0, 0, -self.r_f * self.torque, 0, 0, 0, 0], 
-                                [0, 0, self.r_f * self.torque, self.r_f * self.torque, 0, 0, 0, 0], 
-                                [0, 0, 0, 0, self.r_f * self.torque, self.r_f * self.torque, 0, 0], 
-                                [0, 0, 0, 0, 0, 0, self.r_f * self.torque, self.r_f * self.torque], 
+            [[self.r_f * self.torque, 0, 0, -self.r_f * self.torque, 0, 0, 0, 0],
+                                [0, 0, self.r_f * self.torque, self.r_f * self.torque, 0, 0, 0, 0],
+                                [0, 0, 0, 0, self.r_f * self.torque, self.r_f * self.torque, 0, 0],
+                                [0, 0, 0, 0, 0, 0, self.r_f * self.torque, self.r_f * self.torque],
                                 [0, 0, 0, 0, 0, 0, 0, 0]]
             '''
             self.setup_keys_to_action()
@@ -309,21 +311,21 @@ class Ant(WalkerBase):
     def setup_keys_to_action(self):
         self.keys_to_action = {
             (ord('1'), ): 0,
-            (ord('2'), ): 1, 
-            (ord('3'), ): 2, 
-            (ord('4'), ): 3, 
-            (ord('5'), ): 4, 
-            (ord('6'), ): 5, 
-            (ord('7'), ): 6, 
-            (ord('8'), ): 7, 
-            (ord('9'), ): 8, 
-            (ord('0'), ): 9, 
-            (ord('q'), ): 10, 
-            (ord('w'), ): 11, 
-            (ord('e'), ): 12, 
-            (ord('r'), ): 13, 
-            (ord('t'), ): 14, 
-            (ord('y'), ): 15, 
+            (ord('2'), ): 1,
+            (ord('3'), ): 2,
+            (ord('4'), ): 3,
+            (ord('5'), ): 4,
+            (ord('6'), ): 5,
+            (ord('7'), ): 6,
+            (ord('8'), ): 7,
+            (ord('9'), ): 8,
+            (ord('0'), ): 9,
+            (ord('q'), ): 10,
+            (ord('w'), ): 11,
+            (ord('e'), ): 12,
+            (ord('r'), ): 13,
+            (ord('t'), ): 14,
+            (ord('y'), ): 15,
             (): 4
         }
 
@@ -331,7 +333,7 @@ class Ant(WalkerBase):
 class AntClimber(Ant):
     def __init__(self, config, env=None):
         Ant.__init__(self, config, env=env)
-        
+
     def robot_specific_reset(self):
         Ant.robot_specific_reset(self)
         amplify = 1
@@ -356,7 +358,7 @@ class AntClimber(Ant):
         if debugmode:
             print("Ant xyz potential", self.walk_target_dist_xyz)
         return - self.walk_target_dist_xyz / self.scene.dt
-        
+
     def alive_bonus(self, roll, pitch):
         """Alive requires the ant's head to not touch the ground, it's roll
         and pitch cannot be too large"""
@@ -392,11 +394,11 @@ class Humanoid(WalkerBase):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale
         self.mjcf_scaling = scale
-        WalkerBase.__init__(self, "humanoid.xml", "torso", action_dim=17, 
-                            sensor_dim=44, power=0.41, scale=scale, 
+        WalkerBase.__init__(self, "humanoid.xml", "torso", action_dim=17,
+                            sensor_dim=44, power=0.41, scale=scale,
                             initial_pos=config['initial_pos'],
-                            target_pos=config["target_pos"], 
-                            resolution=config["resolution"], 
+                            target_pos=config["target_pos"],
+                            resolution=config["resolution"],
                             env = env)
         self.glass_id = None
         self.is_discrete = config["is_discrete"]
@@ -415,7 +417,7 @@ class Humanoid(WalkerBase):
             if bodyInfo[1].decode("ascii") == 'humanoid':
                 humanoidId = i
         ## Spherical radiance/glass shield to protect the robot's camera
-        
+
         WalkerBase.robot_specific_reset(self)
 
 
@@ -425,15 +427,15 @@ class Humanoid(WalkerBase):
             self.glass_id = glass_id
             p.changeVisualShape(self.glass_id, -1, rgbaColor=[0, 0, 0, 0])
             p.createMultiBody(baseVisualShapeIndex=glass_id, baseCollisionShapeIndex=-1)
-            cid = p.createConstraint(humanoidId, -1, self.glass_id,-1,p.JOINT_FIXED, 
+            cid = p.createConstraint(humanoidId, -1, self.glass_id,-1,p.JOINT_FIXED,
                 jointAxis=[0,0,0], parentFramePosition=[0, 0, self.glass_offset],
                 childFramePosition=[0,0,0])
-        
+
         robot_pos = list(self._get_scaled_position())
         robot_pos[2] += self.glass_offset
         robot_orn = self.get_orientation()
         p.resetBasePositionAndOrientation(self.glass_id, robot_pos, robot_orn)
-                
+
 
         self.motor_names  = ["abdomen_z", "abdomen_y", "abdomen_x"]
         self.motor_power  = [100, 100, 100]
@@ -446,7 +448,7 @@ class Humanoid(WalkerBase):
         self.motor_names += ["left_shoulder1", "left_shoulder2", "left_elbow"]
         self.motor_power += [75, 75, 75]
         self.motors = [self.jdict[n] for n in self.motor_names]
-        
+
 
     def apply_action(self, a):
         if self.is_discrete:
@@ -459,7 +461,7 @@ class Humanoid(WalkerBase):
 
     def alive_bonus(self, z, pitch):
         return +2 if z > 0.78 else -1   # 2 here because 17 joints produce a lot of electricity cost just from policy noise, living must be better than dying
-    
+
     def setup_keys_to_action(self):
         self.keys_to_action = {
             (ord('w'), ): 0,
@@ -472,21 +474,21 @@ class Husky(WalkerBase):
     mjcf_scaling = 1
     model_type = "URDF"
     default_scale = 0.6
-    
+
     def __init__(self, config, env=None):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale
-        
-        WalkerBase.__init__(self, "husky.urdf", "base_link", action_dim=4, 
+
+        WalkerBase.__init__(self, "husky.urdf", "base_link", action_dim=4,
                             sensor_dim=23, power=2.5, scale=scale,
                             initial_pos=config['initial_pos'],
-                            target_pos=config["target_pos"], 
-                            resolution=config["resolution"], 
+                            target_pos=config["target_pos"],
+                            resolution=config["resolution"],
                             env = env)
         self.is_discrete = config["is_discrete"]
 
         if self.is_discrete:
-            self.action_space = gym.spaces.Discrete(5)        
+            self.action_space = gym.spaces.Discrete(5)
             self.torque = 0.03
             self.action_list = [[self.torque, self.torque, self.torque, self.torque],
                                 [-self.torque, -self.torque, -self.torque, -self.torque],
@@ -498,7 +500,8 @@ class Husky(WalkerBase):
         else:
             action_high = 0.02 * np.ones([4])
             self.action_space = gym.spaces.Box(-action_high, action_high)
-        
+
+    @Profile(filename=None)
     def apply_action(self, action):
         if self.is_discrete:
             realaction = self.action_list[action]
@@ -553,7 +556,7 @@ class HuskyClimber(Husky):
         Ant.robot_specific_reset(self)
         for j in self.jdict.keys():
             self.jdict[j].power_coef = 1.5 * self.jdict[j].power_coef
-        
+
         debugmode=0
         if debugmode:
             for k in self.jdict.keys():
@@ -569,11 +572,11 @@ class Quadrotor(WalkerBase):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale
         self.is_discrete = config["is_discrete"]
-        WalkerBase.__init__(self, "quadrotor.urdf", "base_link", action_dim=4, 
-                            sensor_dim=20, power=2.5, scale = scale, 
+        WalkerBase.__init__(self, "quadrotor.urdf", "base_link", action_dim=4,
+                            sensor_dim=20, power=2.5, scale = scale,
                             initial_pos=config['initial_pos'],
-                            target_pos=config["target_pos"], 
-                            resolution=config["resolution"], 
+                            target_pos=config["target_pos"],
+                            resolution=config["resolution"],
                             env = env)
         if self.is_discrete:
             self.action_space = gym.spaces.Discrete(7)
@@ -621,7 +624,7 @@ class Turtlebot(WalkerBase):
     mjcf_scaling = 1
     model_type = "URDF"
     default_scale = 1
-    
+
     def __init__(self, config, env=None):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale
@@ -691,7 +694,7 @@ class JR(WalkerBase):
     mjcf_scaling = 1
     model_type = "URDF"
     default_scale = 0.6
-    
+
     def __init__(self, config, env=None):
         self.config = config
         scale = config["robot_scale"] if "robot_scale" in config.keys() else self.default_scale

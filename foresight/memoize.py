@@ -14,13 +14,13 @@ class Memoize(object):
         self.ram = RAMStore()
 
         self.store = SingleStoragePolicy(self.ssd)
-        if config['StoragePolicy'] == 'RAMOnly':
+        if config['Memoization']['StoragePolicy'] == 'RAMOnly':
             self.store = SingleStoragePolicy(self.ram)
 
 
     def __call__(self, func):
 
-        if config['EnableMemoization'] == False:
+        if config['Memoization']['Enabled'] == False:
             return func
 
         @wraps(func)

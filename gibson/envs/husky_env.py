@@ -10,6 +10,8 @@ from gibson.core.physics.scene_stadium import SinglePlayerStadiumScene
 import pybullet_data
 import cv2
 
+from foresight.profile import Profile
+
 CALC_OBSTACLE_PENALTY = 0
 
 tracking_camera = {
@@ -52,6 +54,7 @@ class HuskyNavigateEnv(CameraRobotEnv):
         cv2.putText(img, 'fps:{0:.4f}'.format(self.fps), (10, 80), font, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
         return img
 
+    @Profile(filename=None)
     def _rewards(self, action=None, debugmode=False):
         a = action
         potential_old = self.potential
@@ -69,7 +72,7 @@ class HuskyNavigateEnv(CameraRobotEnv):
                 self.robot.feet_contact[i] = 1.0
             else:
                 self.robot.feet_contact[i] = 0.0
-        
+
         electricity_cost  = self.electricity_cost  * float(np.abs(a*self.robot.joint_speeds).mean())
         electricity_cost  += self.stall_torque_cost * float(np.square(a).mean())
 
@@ -80,7 +83,7 @@ class HuskyNavigateEnv(CameraRobotEnv):
             print("steering cost", steering_cost)
 
         wall_contact = []
-        
+
         for i, f in enumerate(self.parts):
             if self.parts[f] not in self.robot.feet:
                 wall_contact += [pt for pt in self.robot.parts[f].contact_list() if pt[6][2] > 0.15]
@@ -108,7 +111,7 @@ class HuskyNavigateEnv(CameraRobotEnv):
         height = self.robot.get_position()[2]
         pitch = self.robot.get_rpy()[1]
         alive = float(self.robot.alive_bonus(height, pitch))
-        
+
         debugmode = 0
         if (debugmode):
             #print("Wall contact points", len(wall_contact))
@@ -247,14 +250,14 @@ class HuskyGibsonFlagRunEnv(CameraRobotEnv):
         self.visualid = -1
         self.lastid = None
         self.gui = self.config["mode"] == "gui"
-        
+
         if self.gui:
             self.visualid = p.createVisualShape(p.GEOM_MESH, fileName=os.path.join(pybullet_data.getDataPath(), 'cube.obj'), meshScale=[0.2, 0.2, 0.2], rgbaColor=[1, 0, 0, 0.7])
         self.colisionid = p.createCollisionShape(p.GEOM_MESH, fileName=os.path.join(pybullet_data.getDataPath(), 'cube.obj'), meshScale=[0.2, 0.2, 0.2])
 
         self.lastid = None
         self.obstacle_dist = 100
-        
+
     def _reset(self):
         obs = CameraRobotEnv._reset(self)
         return obs
@@ -392,7 +395,7 @@ class HuskySemanticNavigateEnv(SemanticRobotEnv):
         if debug_semantic and self.gui:
             for i in range(self.semantic_pos.shape[0]):
                 pos = self.semantic_pos[i]
-                pos[2] += 0.2   # make flag slight above object 
+                pos[2] += 0.2   # make flag slight above object
                 visualId = p.createVisualShape(p.GEOM_MESH, fileName=os.path.join(pybullet_data.getDataPath(), 'cube.obj'), meshScale=[0.1, 0.1, 0.1], rgbaColor=[1, 0, 0, 0.7])
                 flagId = p.createMultiBody(baseVisualShapeIndex=visualId, baseCollisionShapeIndex=-1, basePosition=pos)
                 self.semantic_flagIds.append(flagId)
@@ -472,7 +475,7 @@ def get_obstacle_penalty(robot, depth):
     OBSTACLE_LIMIT = 1.5
     if obstacle_dist < OBSTACLE_LIMIT:
        obstacle_penalty = (obstacle_dist - OBSTACLE_LIMIT)
-    
+
     debugmode = 0
     if debugmode:
         #print("Obstacle screen", screen_sz, screen_delta)

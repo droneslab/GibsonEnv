@@ -31,6 +31,8 @@ import transforms3d.quaternions as quat
 import time
 
 from foresight.memoize import Memoize
+from foresight.profile import Profile
+
 
 DEFAULT_TIMESTEP  = 1.0/(4 * 9)
 DEFAULT_FRAMESKIP = 4
@@ -512,7 +514,8 @@ class CameraRobotEnv(BaseRobotEnv):
     def get_blank_visuals(self):
         return np.zeros((256, 256, 4))
 
-    @Memoize('/tmp/test_foresight')
+    # @Memoize('/tmp/test_foresight')
+    @Profile(filename=None)
     def render_observations(self, pose):
         '''Render all environment observations, called inside every step()
         Input

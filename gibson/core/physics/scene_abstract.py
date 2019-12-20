@@ -4,6 +4,8 @@ import pybullet as p
 import time
 import gym
 
+from foresight.profile import Profile
+
 
 class Scene:
     "A base class for single- and multiplayer scenes"
@@ -44,6 +46,7 @@ class Scene:
         self.cpp_world.clean_everything()
         #self.cpp_world.test_window_history_reset()
 
+    @Profile(filename=None)
     def global_step(self):
         """
         The idea is: apply motor torques for all robots, then call global_step(), then collect
