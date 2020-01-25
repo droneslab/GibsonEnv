@@ -516,7 +516,7 @@ class CameraRobotEnv(BaseRobotEnv):
 
     # @Memoize('/tmp/test_foresight')
     @Profile(filename=None)
-    def render_observations(self, pose):
+    def render_observations(self, pose):render_observations
         '''Render all environment observations, called inside every step()
         Input
             @pose: current robot pose
